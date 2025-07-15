@@ -1,0 +1,20 @@
+{
+    "name": "andreinocenti/social-media-url-validator",
+    "description": "PHP library for validating generic URLs and specific social media URLs, with ID extraction.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AndreInocenti\\SocialMediaUrlValidator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andre Inocenti",
+            "email": "andreinocenti@gmail.com"
+        }
+    ],
+    "require": {},
+    "prefer-stable": true,
+    "minimum-stability": "dev"
+}

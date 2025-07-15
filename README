@@ -1,0 +1,123 @@
+# Social URL Validator
+
+**Social URL Validator** is a lightweight PHP library for validating, parsing, and inspecting URLs—both generic and platform-specific (Instagram, Facebook, TikTok, LinkedIn, YouTube, Twitter, and more). It provides:
+
+- **Generic URL validation**
+- **Platform-specific URL checks and ID extraction**
+- **Embed code generation** for supported social networks
+<!-- - **Integration with Laravel Validator** (optional) -->
+
+---
+
+## Features
+
+- **URL syntax validation**
+<!-- - **Reachability checks** (optional HTTP HEAD request) -->
+<!-- - **Active URL validation** (DNS lookup) -->
+- **Platform-specific validation** and **ID extraction**
+  - Instagram posts and profiles
+  - Facebook posts and pages
+  - TikTok videos and profiles
+  - LinkedIn posts and profiles
+  - YouTube channels, videos, and custom URLs
+  - Twitter/X tweets and profiles
+<!-- - **Laravel Validator rules**:
+  - `social_url:instagram`
+  - `social_url:facebook`
+  - etc.
+- **Command-line inspector** (`inspect:url`) to test URLs from terminal -->
+
+---
+
+## Installation
+
+Require the package via Composer:
+
+```bash
+composer require andreinocenti/php-social-url-validator
+```
+
+---
+
+## Basic Usage
+
+```php
+use AndreInocenti\SocialUrlValidator\UrlValidator;
+
+$validator = new UrlValidator();
+
+// Generic URL check
+if ($validator->isValid('https://example.com')) {
+    echo "Valid URL";\}
+
+// Instagram post URL
+$url = 'https://www.instagram.com/p/POSTID/';
+if ($validator->isInstagramUrl($url)) {
+    $postId = $validator->extractInstagramId($url);
+    echo "Instagram Post ID: $postId";
+}
+
+```
+
+---
+<!--
+# Next Versions
+## Laravel Integration
+
+You can register custom validation rules in your `AppServiceProvider`:
+
+```php
+use Illuminate\Support\Facades\Validator;
+use AndreInocenti\SocialUrlValidator\Rules\InstagramUrl;
+
+public function boot()
+{
+    Validator::extend('instagram_url', SocialUrl::class . '@validateInstagram');
+    // similarly for facebook_url, tiktok_url, etc.
+}
+```
+
+Then in your Form Request or controller:
+
+```php
+$request->validate([
+    'profile_url' => 'required|instagram_url',
+]);
+```
+
+---
+
+## Command-Line Tool
+
+A simple Artisan command to inspect URLs:
+
+```bash
+php artisan inspect:url https://www.youtube.com/watch?v=VIDEOID
+```
+
+---
+
+## Configuration
+
+Publish and edit the config file:
+
+```bash
+php artisan vendor:publish --provider="AndreInocenti\SocialUrlValidator\ServiceProvider"
+```
+
+- `timeout` (seconds)
+- `cache_ttl` (minutes)
+- `user_agent`
+
+--- -->
+
+## Contributing
+
+Contributions are welcome! Please open issues or pull requests on the GitHub repository.
+
+---
+
+## License
+
+The MIT License (MIT). Please see [LICENSE](LICENSE.md) for more information.
+
