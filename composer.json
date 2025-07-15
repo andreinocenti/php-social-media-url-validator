@@ -8,6 +8,14 @@
             "AndreInocenti\\SocialMediaUrlValidator\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        },
+        "files": [
+            "tests/Pest.php"
+        ]
+    },
     "authors": [
         {
             "name": "Andre Inocenti",
