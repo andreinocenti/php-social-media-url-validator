@@ -1,1 +1,5 @@
 vendor
+
+
+# Cache de resultados do PHPUnit
+.phpunit.result.cache
