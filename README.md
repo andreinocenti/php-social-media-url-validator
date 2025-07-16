@@ -1,6 +1,6 @@
-# Social URL Validator
+# Social Media URL Validator
 
-**Social URL Validator** is a lightweight PHP library for validating, parsing, and inspecting URLs—both generic and platform-specific (Instagram, Facebook, TikTok, LinkedIn, YouTube, Twitter). It provides:
+**Social Media URL Validator** is a lightweight PHP library for validating, parsing, and inspecting URLs—both generic and platform-specific (Instagram, Facebook, TikTok, LinkedIn, YouTube, Twitter). It provides:
 
 - **Generic URL validation and detection**
 - **Specific Social Media URL validation and detection**
@@ -25,7 +25,7 @@
 Require the package via Composer:
 
 ```bash
-composer require andreinocenti/php-social-url-validator
+composer require andreinocenti/php-social-media-url-validator
 ```
 
 ---
