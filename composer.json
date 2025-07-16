@@ -22,7 +22,6 @@
             "email": "andreinocenti@gmail.com"
         }
     ],
-    "prefer-stable": true,
     "require-dev": {
         "pestphp/pest": "^1.0"
     },
