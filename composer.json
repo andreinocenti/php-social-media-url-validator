@@ -1,5 +1,5 @@
 {
-    "name": "andreinocenti/social-media-url-validator",
+    "name": "andreinocenti/php-social-media-url-validator",
     "description": "PHP library for validating generic URLs and specific social media URLs, with ID extraction.",
     "type": "library",
     "license": "MIT",
