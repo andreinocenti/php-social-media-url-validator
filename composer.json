@@ -23,7 +23,7 @@
         }
     ],
     "require-dev": {
-        "pestphp/pest": "^1.0"
+        "pestphp/pest": "^2.0"
     },
     "config": {
         "allow-plugins": {
