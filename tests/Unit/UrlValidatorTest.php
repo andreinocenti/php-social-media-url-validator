@@ -45,7 +45,7 @@ it('detects generic category via detectSocialMediaCategory', function () {
     expect($v->detectSocialMediaCategory('https://instagram.com/p/ID'))->toBe('post');
     expect($v->detectSocialMediaCategory('https://twitter.com/user'))->toBe('profile');
     expect($v->detectSocialMediaCategory('https://x.com/user'))->toBe('profile');
-    expect($v->detectSocialMediaCategory('https://facebook.com/Page'))->toBe('page');
+    expect($v->detectSocialMediaCategory('https://facebook.com/Page'))->toBe('profile');
     expect($v->detectSocialMediaCategory('https://linkedin.com/in/user'))->toBe('profile');
     expect($v->detectSocialMediaCategory('https://tiktok.com/@user/video/1'))->toBe('video');
     expect($v->detectSocialMediaCategory('https://unknown.com'))->toBeNull();

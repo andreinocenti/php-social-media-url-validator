@@ -31,15 +31,40 @@ class LinkedInValidator implements PlatformValidator
 
     public function detectUrlCategory(string $url): ?string
     {
-        if (preg_match('~linkedin\.com/in/([^/]+)~i', $url)) {
-            return PlatformsCategoriesEnum::PROFILE->value;
+        $suffix = '/?(?:\\?.*)?$';
+
+        $profilePatterns = [
+            "~^(?:https?://)?(?:www\\.)?linkedin\\.com/in/([A-Za-z0-9_-]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:www\\.)?linkedin\\.com/pub/([A-Za-z0-9_-]+)" . $suffix . "~i",
+            "~^(?:https?://)?lnkd\\.in/([A-Za-z0-9]+)" . $suffix . "~i",
+        ];
+        $postPatterns = [
+            "~^(?:https?://)?(?:www\.)?linkedin\.com/posts/[^/]+_([^/]+)(?:/|$)(?:\?.*)?$~i",
+            "~linkedin\\.com/feed/update/urn:li:activity:(\\d+)" . $suffix . "~i",
+        ];
+
+        $companyPatterns = [
+            "~^(?:https?://)?(?:www\\.)?linkedin\\.com/company/([A-Za-z0-9_-]+)" . $suffix . "~i",
+        ];
+
+        foreach ($profilePatterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return PlatformsCategoriesEnum::PROFILE->value;
+            }
         }
-        if (preg_match('~linkedin\.com/company/([^/]+)~i', $url)) {
-            return PlatformsCategoriesEnum::COMPANY->value;
+
+        foreach ($companyPatterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return PlatformsCategoriesEnum::COMPANY->value;
+            }
         }
-        if (preg_match('~^(?:https?://)?(?:[\w-]+\.)?linkedin\.com/(?:pulse/[^/?#]+ | feed/update/[^/?#]+ | posts/[^/?#]+)(?:[/?#]|$)~ix', $url)) {
-            return PlatformsCategoriesEnum::POST->value;
+
+        foreach ($postPatterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return PlatformsCategoriesEnum::POST->value;
+            }
         }
+
         return null;
     }
 }
