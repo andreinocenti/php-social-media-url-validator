@@ -16,4 +16,6 @@ enum PlatformsCategoriesEnum: string
     case SHORTS = 'shorts';
     case LIVE = 'live';
     case FEED = 'feed';
+    case PLAYLIST = 'playlist';
+    case ACTIVITY = 'activity';
 }
