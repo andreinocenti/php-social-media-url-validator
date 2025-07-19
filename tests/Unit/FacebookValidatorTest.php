@@ -29,6 +29,12 @@ it('many facebook tests at once', function () {
         ['https://m.facebook.com/ExamplePage/posts/987654321', PlatformsCategoriesEnum::POST],
         ['https://facebook.com/story.php?story_fbid=555666777&id=123', PlatformsCategoriesEnum::POST],
         ['https://fb.watch/abcDEF123', PlatformsCategoriesEnum::VIDEO],
+        ['https://www.facebook.com/story.php?story_fbid=1057786096151501&id=100057603602454&_rdr', PlatformsCategoriesEnum::POST],
+        ['https://www.facebook.com/100044573043313/posts/1202953741200383/', PlatformsCategoriesEnum::POST],
+        ['https://www.facebook.com/livealok/posts/pfbid02hZiXMYmzApzCTyPtPdFJcjNoLctb4UjjQ4ZWNRmC1jyWBwpGdAEmnpRQYWZgtftrl?rdid=EDuUBbnFKGvqROQx#', PlatformsCategoriesEnum::POST],
+        ['https://www.facebook.com/story.php?story_fbid=1057786096151501&id=100057603602454&_rdr', PlatformsCategoriesEnum::POST],
+        ['https://www.facebook.com/491794399620983/posts/1121416323325451', PlatformsCategoriesEnum::POST],
+        ['https://www.facebook.com/REVISTABOOKINGR/posts/pfbid0AzwwUU8puAowPPuwxg6RqSbj44kFTT3STZsFwJof6DbBbRis79s6kxes13J5HYnWl', PlatformsCategoriesEnum::POST],
     ];
 
     $v = new FacebookValidator;
