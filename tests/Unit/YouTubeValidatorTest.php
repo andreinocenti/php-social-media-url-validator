@@ -37,6 +37,8 @@ it('many youtube tests at once', function () {
         ['https://youtube.com/user/legacyUserName',  PlatformsCategoriesEnum::USER],
         ['https://www.youtube.com/c/CustomName123',  PlatformsCategoriesEnum::CUSTOM],
         ['https://www.youtube.com/playlist?list=PL1234567890',  PlatformsCategoriesEnum::PLAYLIST],
+        ['https://www.youtube.com/@MyClappy',  PlatformsCategoriesEnum::CHANNEL],
+        ['https://www.youtube.com/@canaldigplay/',  PlatformsCategoriesEnum::CHANNEL],
     ];
 
     $v = new YouTubeValidator;
