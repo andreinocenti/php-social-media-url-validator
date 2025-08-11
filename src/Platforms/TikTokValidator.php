@@ -1,4 +1,5 @@
 <?php
+
 namespace AndreInocenti\SocialMediaUrlValidator\Platforms;
 
 use AndreInocenti\SocialMediaUrlValidator\Contracts\PlatformValidator;
@@ -8,34 +9,52 @@ class TikTokValidator implements PlatformValidator
 {
     public function matches(string $url): bool
     {
-        $suffix = '/?(?:\\?.*)?$';
-        $matches = [
-            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/@[^/]+/video/([A-Za-z0-9_-]+)" . $suffix . "~i",
-            "~^(?:https?://)?vm\\.tiktok\\.com/([A-Za-z0-9_-]+)" . $suffix . "~i",
+        $suffix = '(?:/)?(?:[?#].*)?$';
+
+        $patterns = [
+            // Vídeo canônico: /@user/video/{id}
+            "~^(?:https?://)?(?:www\\.|m\\.)?tiktok\\.com/@[^/]+/video/([A-Za-z0-9_-]+)" . $suffix . "~i",
+            // Mobile legacy: /v/{id}
             "~^(?:https?://)?m\\.tiktok\\.com/v/([A-Za-z0-9_-]+)" . $suffix . "~i",
-            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/@([A-Za-z0-9._]+)" . $suffix . "~i"
+            // Embeds: /embed/{id} e /embed/v2/{id}
+            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/embed/(?:v2/)?([A-Za-z0-9_-]+)" . $suffix . "~i",
+            // Short links: vm.tiktok.com, vt.tiktok.com, tiktok.com/t/{code}
+            "~^(?:https?://)?(?:vm|vt)\\.tiktok\\.com/([A-Za-z0-9]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/t/([A-Za-z0-9]+)" . $suffix . "~i",
+            // Perfil: /@username
+            "~^(?:https?://)?(?:www\\.|m\\.)?tiktok\\.com/@([A-Za-z0-9._]+)" . $suffix . "~i",
         ];
 
-        return (bool) array_reduce($matches, function ($carry, $pattern) use ($url) {
-            return $carry || (bool) preg_match($pattern, $url);
-        }, false);
+        foreach ($patterns as $rx) {
+            if (preg_match($rx, $url)) return true;
+        }
+        return false;
     }
 
     public function detectUrlCategory(string $url): ?string
     {
-        $suffix = '/?(?:\\?.*)?$';
-        $videoMatches = [
-            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/@[^/]+/video/([A-Za-z0-9_-]+)" . $suffix . "~i",
-            "~^(?:https?://)?vm\\.tiktok\\.com/([A-Za-z0-9_-]+)" . $suffix . "~i",
+        $suffix = '(?:/)?(?:[?#].*)?$';
+
+        // Primeiro VIDEO (todas as variantes)
+        $video = [
+            "~^(?:https?://)?(?:www\\.|m\\.)?tiktok\\.com/@[^/]+/video/([A-Za-z0-9_-]+)" . $suffix . "~i",
             "~^(?:https?://)?m\\.tiktok\\.com/v/([A-Za-z0-9_-]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/embed/(?:v2/)?([A-Za-z0-9_-]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:vm|vt)\\.tiktok\\.com/([A-Za-z0-9]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:www\\.)?tiktok\\.com/t/([A-Za-z0-9]+)" . $suffix . "~i",
         ];
-        $profileMatches = ["~^(?:https?://)?(?:www\\.)?tiktok\\.com/@([A-Za-z0-9._]+)" . $suffix . "~i"];
-        if (preg_match($videoMatches[0], $url) || preg_match($videoMatches[1], $url) || preg_match($videoMatches[2], $url)) {
-            return PlatformsCategoriesEnum::VIDEO->value;
+        foreach ($video as $rx) {
+            if (preg_match($rx, $url)) {
+                return PlatformsCategoriesEnum::VIDEO->value;
+            }
         }
-        if (preg_match($profileMatches[0], $url)) {
+
+        // Depois PROFILE
+        $profile = "~^(?:https?://)?(?:www\\.|m\\.)?tiktok\\.com/@([A-Za-z0-9._]+)" . $suffix . "~i";
+        if (preg_match($profile, $url)) {
             return PlatformsCategoriesEnum::PROFILE->value;
         }
+
         return null;
     }
 }
