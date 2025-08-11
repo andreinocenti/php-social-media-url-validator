@@ -14,6 +14,7 @@ enum PlatformsCategoriesEnum: string
     case USER = 'user';
     case CUSTOM = 'custom';
     case SHORTS = 'shorts';
+    case STORY = 'story';
     case LIVE = 'live';
     case FEED = 'feed';
     case PLAYLIST = 'playlist';
