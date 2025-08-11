@@ -9,19 +9,22 @@ class LinkedInValidator implements PlatformValidator
     public function matches(string $url): bool
     {
         $regex = '~^
-            (?:https?://)?                     # esquema opcional
-            (?:[\w-]+\.)?linkedin\.com/        # domínio linkedin.com com subdomínio opcional
+            (?:https?://)?
             (?:
-                in/[^/?#]+ |                   # perfil
-                company/[^/?#]+ |              # empresa
-                groups/[^/?#]+ |               # grupo
-                school/[^/?#]+ |               # escola
-                events/[^/?#]+ |               # evento
-                pulse/[^/?#]+ |                # artigo Pulse
-                feed/update/[^/?#]+ |          # feed update (urn:li:activity…)
-                posts/[^/?#]+                  # posts legacy
+                (?:[\w-]+\.)?linkedin\.com/
+                (?:
+                    in/[^/?#]+ |
+                    company/[^/?#]+ |
+                    groups/[^/?#]+ |
+                    school/[^/?#]+ |
+                    events/[^/?#]+ |
+                    pulse/[^/?#]+  |
+                    feed/update/[^/?#]+ |
+                    posts/[^/?#]+
+                )
+            | lnkd\.in/[^/?#]+          # <-- aceita short links
             )
-            (?:[/?#]|$)                        # depois disso vem /, ?, # ou fim da string
+            (?:[/?#]|$)
         ~ix';
         return (bool) preg_match(
             $regex,
@@ -32,19 +35,22 @@ class LinkedInValidator implements PlatformValidator
     public function detectUrlCategory(string $url): ?string
     {
         $suffix = '/?(?:\\?.*)?$';
+        // aceita letras/números/._- ou sequências %HH
+        $seg = '((?:[A-Za-z0-9._-]|%[0-9A-Fa-f]{2})+)';
 
         $profilePatterns = [
-            "~^(?:https?://)?(?:www\\.)?linkedin\\.com/in/([A-Za-z0-9_-]+)" . $suffix . "~i",
-            "~^(?:https?://)?(?:www\\.)?linkedin\\.com/pub/([A-Za-z0-9_-]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/in/{$seg}{$suffix}~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/pub/{$seg}{$suffix}~i",
             "~^(?:https?://)?lnkd\\.in/([A-Za-z0-9]+)" . $suffix . "~i",
         ];
+
         $postPatterns = [
-            "~^(?:https?://)?(?:www\.)?linkedin\.com/posts/[^/]+_([^/]+)(?:/|$)(?:\?.*)?$~i",
-            "~linkedin\\.com/feed/update/urn:li:activity:(\\d+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/posts/[^/]+_([^/]+)(?:/|$)(?:\\?.*)?$~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/feed/update/urn:li:activity:(\\d+)" . $suffix . "~i",
         ];
 
         $companyPatterns = [
-            "~^(?:https?://)?(?:www\\.)?linkedin\\.com/company/([A-Za-z0-9_-]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/company/{$seg}{$suffix}~i",
         ];
 
         foreach ($profilePatterns as $pattern) {
