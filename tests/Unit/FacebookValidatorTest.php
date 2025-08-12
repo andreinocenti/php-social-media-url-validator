@@ -20,6 +20,10 @@ describe('Facebook', function () {
         expect($v->matches('https://www.facebook.com/PageName/'))->toBeTrue();
         expect($v->matches('https://m.facebook.com/PageName?utm_source=x'))->toBeTrue();
 
+        expect($v->matches('https://web.facebook.com/pagename'))->toBeTrue();
+        expect($v->matches('https://pt-br.facebook.com/pagename/'))->toBeTrue();
+
+
         // Posts (numérico e pfbid)
         expect($v->matches('https://facebook.com/PageName/posts/5678'))->toBeTrue();
         expect($v->matches('https://www.facebook.com/PageName/posts/pfbid02hZiXMYmzApzCTyPtPdFJcjNoLctb4UjjQ4ZWNRmC1jyWBwpGdAEmnpRQYWZgtftrl'))->toBeTrue();
@@ -59,6 +63,8 @@ describe('Facebook', function () {
         expect($v->detectUrlCategory('https://facebook.com/PageName'))->toBe(PlatformsCategoriesEnum::PROFILE->value);
         expect($v->detectUrlCategory('https://facebook.com/PageName/posts/5678'))->toBe(PlatformsCategoriesEnum::POST->value);
         expect($v->detectUrlCategory('https://facebook.com/PageName/about'))->toBeNull();
+        expect($v->detectUrlCategory('https://web.facebook.com/pagename'))->toBe(PlatformsCategoriesEnum::PROFILE->value);
+        expect($v->detectUrlCategory('https://pt-br.facebook.com/pagename/'))->toBe(PlatformsCategoriesEnum::PROFILE->value);
     });
 
     it('detects POST in many shapes', function () {

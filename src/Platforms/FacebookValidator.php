@@ -9,24 +9,28 @@ class FacebookValidator implements PlatformValidator
 {
     public function matches(string $url): bool
     {
+        $host   = '(?:[\\w-]+\\.)?facebook\\.com';
+        $suffix = '(?:/)?(?:[?#&].*)?$';
+
         $specific = [
             // PROFILE numeric
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/profile\.php\?id=\d+(?:[/?#&].*)?$~i',
-            // PROFILE vanity
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/'
-                . '(?!(?:posts|videos|watch|reel|groups|story\.php|events|help|gaming|marketplace|messages|notifications|settings|home|plugins|privacy|policies|legal|people|pages|places|permalink)(?:/|$|[?#&]))'
-                . '[0-9A-Za-z\.]+(?:/)?(?:[?#&].*)?$~i',
+            "~^(?:https?://)?{$host}/profile\\.php\\?id=\\d+{$suffix}~i",
 
-            // POST
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/[^/]+/posts/[A-Za-z0-9_-]+(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/story\.php\?story_fbid=\d+&id=\d+(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/groups/\d+/(?:posts|permalink)/[A-Za-z0-9]+(?:/)?(?:[?#&].*)?$~i',
+            // PROFILE vanity (nega rotas reservadas)
+            "~^(?:https?://)?{$host}/"
+                . "(?!(?:posts|videos|watch|reel|groups|story\\.php|events|help|gaming|marketplace|messages|notifications|settings|home|plugins|privacy|policies|legal|people|pages|places|permalink)(?:/|$|[?#&]))"
+                . "[0-9A-Za-z\\.]+{$suffix}~i",
 
-            // VIDEO
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/(?:video\.php\?v=|[^/]+/videos/)\d+(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/watch(?:/)?\?v=[A-Za-z0-9]+(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/reel/[A-Za-z0-9]+(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?fb\.watch/[A-Za-z0-9_]+(?:/)?(?:[?#&].*)?$~i',
+            // POST (page), story.php, grupos (posts|permalink)
+            "~^(?:https?://)?{$host}/[^/]+/posts/[A-Za-z0-9_-]+{$suffix}~i",
+            "~^(?:https?://)?{$host}/story\\.php\\?story_fbid=\\d+&id=\\d+{$suffix}~i",
+            "~^(?:https?://)?{$host}/groups/\\d+/(?:posts|permalink)/[A-Za-z0-9_-]+{$suffix}~i",
+
+            // VIDEO (video.php|/videos/), watch?v=, reel/, fb.watch
+            "~^(?:https?://)?{$host}/(?:video\\.php\\?v=|[^/]+/videos/)\\d+{$suffix}~i",
+            "~^(?:https?://)?{$host}/watch/?\\?v=[A-Za-z0-9]+(?:[?#&].*)?$~i",
+            "~^(?:https?://)?{$host}/reel/[A-Za-z0-9]+{$suffix}~i",
+            "~^(?:https?://)?fb\\.watch/[A-Za-z0-9_]+{$suffix}~i",
         ];
 
         foreach ($specific as $pattern) {
@@ -35,20 +39,22 @@ class FacebookValidator implements PlatformValidator
             }
         }
 
-        // ✅ Fallback amplo: qualquer URL do Facebook/fb.watch conta como “da plataforma”
-        return (bool) preg_match(
-            '~^(?:https?://)?(?:(?:www\.|m\.|mbasic\.)?facebook\.com|fb\.watch)(?:/|$)~i',
-            $url
-        );
+        // Fallback: qualquer domínio Facebook/fb.watch
+        return (bool) preg_match("~^(?:https?://)?(?:{$host}|fb\\.watch)(?:/|$)~i", $url);
     }
 
     public function detectUrlCategory(string $url): ?string
     {
+        // aceita web., pt-br., es-la., m., mbasic., www., etc.
+        $host   = '(?:[\\w-]+\\.)?facebook\\.com';
+        // barra final opcional + querystring/fragment opcionais
+        $suffix = '(?:/)?(?:[?#&].*)?$';
+
         // 1) POST primeiro
         $postPatterns = [
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/[^/]+/posts/([A-Za-z0-9_-]+)(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/story\.php\?story_fbid=(\d+)&id=\d+(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/groups/\d+/(?:posts|permalink)/([A-Za-z0-9]+)(?:/)?(?:[?#&].*)?$~i',
+            "~^(?:https?://)?{$host}/[^/]+/posts/([A-Za-z0-9_-]+){$suffix}~i",
+            "~^(?:https?://)?{$host}/story\\.php\\?story_fbid=(\\d+)&id=\\d+{$suffix}~i",
+            "~^(?:https?://)?{$host}/groups/\\d+/(?:posts|permalink)/([A-Za-z0-9_-]+){$suffix}~i",
         ];
         foreach ($postPatterns as $p) {
             if (preg_match($p, $url)) {
@@ -58,10 +64,10 @@ class FacebookValidator implements PlatformValidator
 
         // 2) VIDEO
         $videoPatterns = [
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/(?:video\.php\?v=|[^/]+/videos/)(\d+)(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/watch(?:/)?\?v=([A-Za-z0-9]+)(?:[?#&].*)?$~i',
-            '~^(?:https?://)?fb\.watch/([A-Za-z0-9_]+)(?:/)?(?:[?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/reel/([A-Za-z0-9]+)(?:/)?(?:[?#&].*)?$~i',
+            "~^(?:https?://)?{$host}/(?:video\\.php\\?v=|[^/]+/videos/)(\\d+){$suffix}~i",
+            "~^(?:https?://)?{$host}/watch/?\\?v=([A-Za-z0-9]+)(?:[?#&].*)?$~i",
+            "~^(?:https?://)?fb\\.watch/([A-Za-z0-9_]+){$suffix}~i",
+            "~^(?:https?://)?{$host}/reel/([A-Za-z0-9]+){$suffix}~i",
         ];
         foreach ($videoPatterns as $p) {
             if (preg_match($p, $url)) {
@@ -69,12 +75,12 @@ class FacebookValidator implements PlatformValidator
             }
         }
 
-        // 3) PROFILE
+        // 3) PROFILE (vanity e numérico)
         $profilePatterns = [
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/profile\.php\?id=(\d+)(?:[/?#&].*)?$~i',
-            '~^(?:https?://)?(?:www\.|m\.|mbasic\.)?facebook\.com/'
-                . '(?!(?:posts|videos|watch|reel|groups|story\.php|events|help|gaming|marketplace|messages|notifications|settings|home|plugins|privacy|policies|legal|people|pages|places|permalink)(?:/|$|[?#&]))'
-                . '([0-9A-Za-z\.]+)(?:/)?(?:[?#&].*)?$~i',
+            "~^(?:https?://)?{$host}/profile\\.php\\?id=(\\d+)(?:[/?#&].*)?$~i",
+            "~^(?:https?://)?{$host}/"
+                . "(?!(?:posts|videos|watch|reel|groups|story\\.php|events|help|gaming|marketplace|messages|notifications|settings|home|plugins|privacy|policies|legal|people|pages|places|permalink)(?:/|$|[?#&]))"
+                . "([0-9A-Za-z\\.]+){$suffix}~i",
         ];
         foreach ($profilePatterns as $p) {
             if (preg_match($p, $url)) {
