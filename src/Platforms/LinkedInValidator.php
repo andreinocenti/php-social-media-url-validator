@@ -14,7 +14,7 @@ class LinkedInValidator implements PlatformValidator
                 (?:[\w-]+\.)?linkedin\.com/
                 (?:
                     in/[^/?#]+ |
-                    company/[^/?#]+ |
+                    company/[^/?#]+(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)(?:/[^/?#]+)?)? |
                     groups/[^/?#]+ |
                     school/[^/?#]+ |
                     events/[^/?#]+ |
@@ -22,7 +22,7 @@ class LinkedInValidator implements PlatformValidator
                     feed/update/[^/?#]+ |
                     posts/[^/?#]+
                 )
-            | lnkd\.in/[^/?#]+          # <-- aceita short links
+            | lnkd\.in/[^/?#]+
             )
             (?:[/?#]|$)
         ~ix';
@@ -34,7 +34,7 @@ class LinkedInValidator implements PlatformValidator
 
     public function detectUrlCategory(string $url): ?string
     {
-        $suffix = '/?(?:\\?.*)?$';
+        $suffix = '/?(?:[?#].*)?$';
         // aceita letras/números/._- ou sequências %HH
         $seg = '((?:[A-Za-z0-9._-]|%[0-9A-Fa-f]{2})+)';
 
@@ -50,8 +50,11 @@ class LinkedInValidator implements PlatformValidator
         ];
 
         $companyPatterns = [
-            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/company/{$seg}{$suffix}~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/company/{$seg}"
+                . "(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)"
+                . "(?:/{$seg})?)?{$suffix}~iu",
         ];
+
 
         foreach ($profilePatterns as $pattern) {
             if (preg_match($pattern, $url, $matches)) {

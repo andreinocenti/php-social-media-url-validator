@@ -36,6 +36,7 @@ describe('LinkedIn', function () {
             ['https://linkedin.com/in/public-user-123?test=123', PlatformsCategoriesEnum::PROFILE],
             ['https://lnkd.in/xyzABC', PlatformsCategoriesEnum::PROFILE],
             ['https://linkedin.com/company/examplecorp/', PlatformsCategoriesEnum::COMPANY],
+            ['https://www.linkedin.com/company/kakaka/about/', PlatformsCategoriesEnum::COMPANY],
             ['https://www.linkedin.com/feed/update/urn:li:activity:1234567890123456789', PlatformsCategoriesEnum::POST],
             ['https://linkedin.com/posts/example-user-123_postIdXYZ', PlatformsCategoriesEnum::POST],
             ['https://www.linkedin.com/feed/update/urn:li:activity:1234567890123456789/?test=123', PlatformsCategoriesEnum::POST],
