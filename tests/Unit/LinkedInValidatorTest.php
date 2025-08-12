@@ -40,6 +40,8 @@ describe('LinkedIn', function () {
             ['https://www.linkedin.com/feed/update/urn:li:activity:1234567890123456789', PlatformsCategoriesEnum::POST],
             ['https://linkedin.com/posts/example-user-123_postIdXYZ', PlatformsCategoriesEnum::POST],
             ['https://www.linkedin.com/feed/update/urn:li:activity:1234567890123456789/?test=123', PlatformsCategoriesEnum::POST],
+            ['https://www.linkedin.com/company/up-comunicação-inteligente/', PlatformsCategoriesEnum::COMPANY],
+            ['https://www.linkedin.com/showcase/revistapegn/', PlatformsCategoriesEnum::COMPANY],
         ];
 
         $v = new LinkedInValidator;

@@ -9,34 +9,35 @@ class LinkedInValidator implements PlatformValidator
     public function matches(string $url): bool
     {
         $regex = '~^
-            (?:https?://)?
+        (?:https?://)?
+        (?:
+            (?:[\w-]+\.)?linkedin\.com/
             (?:
-                (?:[\w-]+\.)?linkedin\.com/
-                (?:
-                    in/[^/?#]+ |
-                    company/[^/?#]+(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)(?:/[^/?#]+)?)? |
-                    groups/[^/?#]+ |
-                    school/[^/?#]+ |
-                    events/[^/?#]+ |
-                    pulse/[^/?#]+  |
-                    feed/update/[^/?#]+ |
-                    posts/[^/?#]+
-                )
-            | lnkd\.in/[^/?#]+
+                in/[^/?#]+ |
+                company/[^/?#]+(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)(?:/[^/?#]+)?)? |
+                showcase/[^/?#]+(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)(?:/[^/?#]+)?)? |
+                groups/[^/?#]+ |
+                school/[^/?#]+ |
+                events/[^/?#]+ |
+                pulse/[^/?#]+  |
+                feed/update/[^/?#]+ |
+                posts/[^/?#]+
             )
-            (?:[/?#]|$)
-        ~ix';
-        return (bool) preg_match(
-            $regex,
-            $url
-        );
-    }
+        | lnkd\.in/[^/?#]+
+        )
+        (?:[/?#]|$)
+    ~ix';
+
+        return (bool) preg_match($regex, $url);
+}
 
     public function detectUrlCategory(string $url): ?string
     {
         $suffix = '/?(?:[?#].*)?$';
+
         // aceita letras/números/._- ou sequências %HH
-        $seg = '((?:[A-Za-z0-9._-]|%[0-9A-Fa-f]{2})+)';
+        $seg = '((?:%[0-9A-Fa-f]{2}|[\p{L}\p{N}._-])+)'; // requer flag "u"
+
 
         $profilePatterns = [
             "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/in/{$seg}{$suffix}~i",
@@ -50,7 +51,7 @@ class LinkedInValidator implements PlatformValidator
         ];
 
         $companyPatterns = [
-            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/company/{$seg}"
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/(?:company|showcase)/{$seg}"
                 . "(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)"
                 . "(?:/{$seg})?)?{$suffix}~iu",
         ];
