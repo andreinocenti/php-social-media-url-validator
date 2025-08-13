@@ -35,44 +35,47 @@ class LinkedInValidator implements PlatformValidator
     {
         $suffix = '/?(?:[?#].*)?$';
 
-        // aceita letras/números/._- ou sequências %HH
-        $seg = '((?:%[0-9A-Fa-f]{2}|[\p{L}\p{N}._-])+)'; // requer flag "u"
+        // slug com unicode + %XX + alguns símbolos comuns em slugs do LinkedIn
+        $seg = "((?:%[0-9A-Fa-f]{2}|[\\p{L}\\p{N}._'&()+,-])+)";
+        // /pt, /de, /en-us… opcional após o slug de perfil
+        $locale = "(?:/[a-z]{2,5}(?:-[a-z]{2,5})?)?";
 
-
+        // PERFIL (/in/… ou /pub/…)
         $profilePatterns = [
-            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/in/{$seg}{$suffix}~i",
-            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/pub/{$seg}{$suffix}~i",
-            "~^(?:https?://)?lnkd\\.in/([A-Za-z0-9]+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/in/{$seg}{$locale}{$suffix}~iu",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/pub/{$seg}{$locale}{$suffix}~iu",
+            "~^(?:https?://)?lnkd\\.in/([A-Za-z0-9]+){$suffix}~i",
         ];
 
+        // POSTS (activity)
         $postPatterns = [
             "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/posts/[^/]+_([^/]+)(?:/|$)(?:\\?.*)?$~i",
-            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/feed/update/urn:li:activity:(\\d+)" . $suffix . "~i",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/feed/update/urn:li:activity:(\\d+){$suffix}~i",
         ];
 
+        // COMPANY (inclui company|showcase|school) + abas e até 2 sub-segmentos
         $companyPatterns = [
-            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/(?:company|showcase)/{$seg}"
-                . "(?:/(?:about|people|posts|jobs|life|updates|insights|events|services)"
-                . "(?:/{$seg})?)?{$suffix}~iu",
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/(?:company|showcase|school)/{$seg}"
+                . "(?:/(?:about|people|posts|jobs|life|updates|insights|events|services|admin)"
+                . "(?:/{$seg}){0,2})?{$suffix}~iu",
         ];
 
+        // GROUPS
+        $groupPatterns = [
+            "~^(?:https?://)?(?:[\\w-]+\\.)?linkedin\\.com/groups/([A-Za-z0-9]+)(?:/)?(?:[?#].*)?$~i",
+        ];
 
-        foreach ($profilePatterns as $pattern) {
-            if (preg_match($pattern, $url, $matches)) {
-                return PlatformsCategoriesEnum::PROFILE->value;
-            }
+        foreach ($postPatterns as $p) {
+            if (preg_match($p, $url)) return PlatformsCategoriesEnum::POST->value;
         }
-
-        foreach ($companyPatterns as $pattern) {
-            if (preg_match($pattern, $url, $matches)) {
-                return PlatformsCategoriesEnum::COMPANY->value;
-            }
+        foreach ($companyPatterns as $p) {
+            if (preg_match($p, $url)) return PlatformsCategoriesEnum::COMPANY->value;
         }
-
-        foreach ($postPatterns as $pattern) {
-            if (preg_match($pattern, $url, $matches)) {
-                return PlatformsCategoriesEnum::POST->value;
-            }
+        foreach ($groupPatterns as $p) {
+            if (preg_match($p, $url)) return PlatformsCategoriesEnum::GROUP->value;
+        }
+        foreach ($profilePatterns as $p) {
+            if (preg_match($p, $url)) return PlatformsCategoriesEnum::PROFILE->value;
         }
 
         return null;

@@ -9,6 +9,7 @@ enum PlatformsCategoriesEnum: string
     case PROFILE = 'profile';
     case VIDEO = 'video';
     case CHANNEL = 'channel';
+    case GROUP = 'group';
     case PAGE = 'page';
     case COMPANY = 'company';
     case USER = 'user';
